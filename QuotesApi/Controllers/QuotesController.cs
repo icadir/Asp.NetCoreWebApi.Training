@@ -39,6 +39,7 @@ namespace QuotesApi.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            // TEst = 123
             _quotos.RemoveAt(id);
         }
     }
