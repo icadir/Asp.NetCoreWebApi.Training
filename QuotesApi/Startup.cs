@@ -31,6 +31,7 @@ namespace QuotesApi
             services.AddDbContext<QuotesDbContext>(option =>
                 option.UseSqlServer(@"Data Source =.; Initial Catalog=QuotesDb;Integrated Security=true"));
             services.AddMvc().AddXmlSerializerFormatters();
+            services.AddResponseCaching();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +48,7 @@ namespace QuotesApi
 
             app.UseHttpsRedirection();
             //quotesDbContext.Database.EnsureCreated();
+            app.UseResponseCaching();
             app.UseMvc();
         }
     }
