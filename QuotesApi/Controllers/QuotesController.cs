@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.UI.Pages.Internal.Account;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 using QuotesApi.Data;
 using QuotesApi.Models;
 
@@ -21,10 +23,24 @@ namespace QuotesApi.Controllers
         }
         // GET: api/Quotes
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(string sort)
         {
+            IEnumerable<Quote> quotes;
+
+            switch (sort)
+            {
+                case "desc":
+                    quotes = _quotesDbContext.Quotes.OrderByDescending(q => q.CreatedAt);
+                    break;
+                case "asc":
+                    quotes = _quotesDbContext.Quotes.OrderBy(q => q.CreatedAt);
+                    break;
+                default:
+                    quotes = _quotesDbContext.Quotes;
+                    break;
+            }
             // return _quotesDbContext.Quotes.ToList();
-            return Ok(_quotesDbContext.Quotes);
+            return Ok(quotes);
         }
 
         // GET: api/Quotes/5
@@ -94,6 +110,23 @@ namespace QuotesApi.Controllers
                 _quotesDbContext.SaveChanges();
                 return Ok("Code Deleted");
             }
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult PagingQuote(int? pageNumber, int? pageSize)
+        {
+            var quotes = _quotesDbContext.Quotes;
+            var currentPageNumber = pageNumber ?? 1;
+            var currentPAgeSize = pageSize ?? 5;
+
+            return Ok(quotes.Skip((currentPageNumber - 1) * currentPAgeSize).Take(currentPAgeSize));
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult SearchQuote(string type)
+        {
+          var quotes=  _quotesDbContext.Quotes.Where(x => x.Type.StartsWith(type));
+          return Ok(quotes);
         }
     }
 }
