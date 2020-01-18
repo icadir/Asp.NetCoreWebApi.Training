@@ -42,6 +42,12 @@ namespace QuotesApi.Controllers
             }
         }
 
+        // api/quotes/test/1
+        [HttpGet("[action]/{id}")]
+        public int Test(int id)
+        {
+            return id;
+        }
         // POST: api/Quotes
         [HttpPost]
         public IActionResult Post([FromBody] Quote quote)
